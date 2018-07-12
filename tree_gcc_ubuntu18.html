@@ -1,0 +1,265 @@
+<html>
+    <head>
+        <!--[if IE]><script language="javascript" type="text/javascript" src="js/excanvas.min.js"></script><![endif]-->
+        <script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+        <script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
+    </head>
+    <body>
+
+<script>
+    $("<div id='tooltip'></div>").css({
+                                    position: "absolute",
+                                    display: "none",
+                                    border: "1px solid #fdd",
+                                    padding: "2px",
+                                    "background-color": "#fee",
+                                    opacity: 0.80
+                                  }).appendTo("body");
+                
+    series_settings = {
+        lines: { show: true },
+        points: { show: true }
+    };
+
+    grid_settings = { tickColor: '#ddd', hoverable: true };
+
+    xaxis_settings = {
+        tickFormatter: function(num, obj) { return parseInt(num/1000000) + 'M'; }
+    };
+
+    yaxis_runtime_settings = {
+        tickFormatter: function(num, obj) { return (+num.toFixed(2)) + ' sec.'; }
+    };
+
+    yaxis_memory_settings = {
+        tickFormatter: function(num, obj) { return parseInt(num/1024/1024) + 'MiB'; }
+    };
+
+    legend_settings = {
+        position: 'nw',
+        backgroundOpacity: 0
+    };
+
+    runtime_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_runtime_settings,
+        legend: legend_settings
+    };
+
+    memory_settings = {
+        series: series_settings,
+        grid: grid_settings,
+        xaxis: xaxis_settings,
+        yaxis: yaxis_memory_settings,
+        legend: legend_settings
+    };
+
+    chart_data = {"delete-runtime": [{"data": [[1000000, 0.471223], [2000000, 1.062024], [3000000, 1.706859], [4000000, 2.401456], [5000000, 3.126905]], "label": "momo_map"}, {"data": [[1000000, 1.042442], [2000000, 2.397424], [3000000, 3.900997], [4000000, 5.494548], [5000000, 7.202834]], "label": "std_map_momo_pool"}, {"data": [[1000000, 1.104977], [2000000, 2.531161], [3000000, 4.091016], [4000000, 5.744436], [5000000, 7.558572]], "label": "std_map"}, {"data": [[1000000, 0.435946], [2000000, 0.987298], [3000000, 1.573947], [4000000, 2.204382], [5000000, 2.870741]], "label": "google_btree_map"}], 
+"deletestring-runtime": [{"data": [[1000000, 2.360621], [2000000, 5.426663], [3000000, 9.535675], [4000000, 13.286412], [5000000, 17.123844]], "label": "momo_map"}, {"data": [[1000000, 2.497784], [2000000, 5.666929], [3000000, 9.051849], [4000000, 12.613876], [5000000, 16.370468]], "label": "std_map_momo_pool"}, {"data": [[1000000, 2.314245], [2000000, 5.210107], [3000000, 8.47736], [4000000, 11.887043], [5000000, 15.233234]], "label": "std_map"}, {"data": [[1000000, 2.288979], [2000000, 5.33599], [3000000, 8.625623], [4000000, 12.1057], [5000000, 15.797919]], "label": "google_btree_map"}], 
+"readsmallstring-runtime": [{"data": [[1000000, 1.233857], [2000000, 2.910412], [3000000, 4.543072], [4000000, 6.165627], [5000000, 7.833456]], "label": "momo_map"}, {"data": [[1000000, 1.441373], [2000000, 3.34454], [3000000, 5.368437], [4000000, 7.488295], [5000000, 9.683959]], "label": "std_map_momo_pool"}, {"data": [[1000000, 1.447999], [2000000, 3.312767], [3000000, 5.394222], [4000000, 7.477784], [5000000, 9.691751]], "label": "std_map"}, {"data": [[1000000, 1.341317], [2000000, 3.125781], [3000000, 4.975396], [4000000, 6.810894], [5000000, 8.868226]], "label": "google_btree_map"}], 
+"randomfull-runtime": [{"data": [[1000000, 0.583453], [2000000, 1.297364], [3000000, 2.045621], [4000000, 2.882149], [5000000, 3.704774]], "label": "momo_map"}, {"data": [[1000000, 0.910095], [2000000, 2.071201], [3000000, 3.352992], [4000000, 4.713247], [5000000, 6.139446]], "label": "std_map_momo_pool"}, {"data": [[1000000, 1.053367], [2000000, 2.389228], [3000000, 3.836277], [4000000, 5.374101], [5000000, 6.966728]], "label": "std_map"}, {"data": [[1000000, 0.50165], [2000000, 1.134324], [3000000, 1.809509], [4000000, 2.505008], [5000000, 3.24634]], "label": "google_btree_map"}], 
+"insertsmallstring-runtime": [{"data": [[1000000, 1.683081], [2000000, 3.775112], [3000000, 5.923137], [4000000, 8.079576], [5000000, 10.394287]], "label": "momo_map"}, {"data": [[1000000, 1.540078], [2000000, 3.501787], [3000000, 5.539879], [4000000, 7.671386], [5000000, 9.911797]], "label": "std_map_momo_pool"}, {"data": [[1000000, 1.636557], [2000000, 3.712347], [3000000, 5.841985], [4000000, 8.153125], [5000000, 10.38404]], "label": "std_map"}, {"data": [[1000000, 1.636816], [2000000, 3.704785], [3000000, 5.841695], [4000000, 8.04497], [5000000, 10.330343]], "label": "google_btree_map"}], 
+"insertsmallstring-memory": [{"data": [[1000000, 59301888], [2000000, 104099840], [3000000, 148418560], [4000000, 193294336], [5000000, 237502464]], "label": "momo_map"}, {"data": [[1000000, 88440832], [2000000, 162377728], [3000000, 236314624], [4000000, 310386688], [5000000, 384323584]], "label": "std_map_momo_pool"}, {"data": [[1000000, 94384128], [2000000, 174403584], [3000000, 254423040], [4000000, 334307328], [5000000, 414326784]], "label": "std_map"}, {"data": [[1000000, 73334784], [2000000, 132132864], [3000000, 191066112], [4000000, 249729024], [5000000, 308662272]], "label": "google_btree_map"}], 
+"iteration-runtime": [{"data": [[1000000, 0.010167], [2000000, 0.020803], [3000000, 0.03163], [4000000, 0.042246], [5000000, 0.05358]], "label": "momo_map"}, {"data": [[1000000, 0.108717], [2000000, 0.22819], [3000000, 0.350795], [4000000, 0.474401], [5000000, 0.59926]], "label": "std_map_momo_pool"}, {"data": [[1000000, 0.131784], [2000000, 0.275332], [3000000, 0.421519], [4000000, 0.570351], [5000000, 0.723739]], "label": "std_map"}, {"data": [[1000000, 0.012319], [2000000, 0.025029], [3000000, 0.038089], [4000000, 0.051466], [5000000, 0.065081]], "label": "google_btree_map"}], 
+"randomfullread-runtime": [{"data": [[1000000, 0.356388], [2000000, 0.819145], [3000000, 1.318336], [4000000, 1.867266], [5000000, 2.43686]], "label": "momo_map"}, {"data": [[1000000, 0.940063], [2000000, 2.15015], [3000000, 3.494138], [4000000, 4.919679], [5000000, 6.460482]], "label": "std_map_momo_pool"}, {"data": [[1000000, 0.92534], [2000000, 2.131361], [3000000, 3.466629], [4000000, 4.925453], [5000000, 6.472183]], "label": "std_map"}, {"data": [[1000000, 0.403058], [2000000, 0.909222], [3000000, 1.439115], [4000000, 2.017479], [5000000, 2.624759]], "label": "google_btree_map"}], 
+"randomfull-memory": [{"data": [[1000000, 33280000], [2000000, 51982336], [3000000, 70307840], [4000000, 89464832], [5000000, 107556864]], "label": "momo_map"}, {"data": [[1000000, 63840256], [2000000, 113311744], [3000000, 162918400], [4000000, 212389888], [5000000, 261861376]], "label": "std_map_momo_pool"}, {"data": [[1000000, 78434304], [2000000, 142368768], [3000000, 206438400], [4000000, 270372864], [5000000, 334307328]], "label": "std_map"}, {"data": [[1000000, 37109760], [2000000, 59817984], [3000000, 82526208], [4000000, 105234432], [5000000, 127942656]], "label": "google_btree_map"}], 
+"readstring-runtime": [{"data": [[1000000, 2.237687], [2000000, 5.121243], [3000000, 8.10785], [4000000, 11.273472], [5000000, 14.570944]], "label": "momo_map"}, {"data": [[1000000, 2.097313], [2000000, 4.87228], [3000000, 7.731608], [4000000, 10.837358], [5000000, 13.946891]], "label": "std_map_momo_pool"}, {"data": [[1000000, 1.920954], [2000000, 4.367192], [3000000, 6.982986], [4000000, 9.726433], [5000000, 12.476645]], "label": "std_map"}, {"data": [[1000000, 2.345448], [2000000, 5.364789], [3000000, 8.722046], [4000000, 12.156948], [5000000, 15.886227]], "label": "google_btree_map"}], 
+"insertstring-memory": [{"data": [[1000000, 137723904], [2000000, 262500352], [3000000, 386830336], [4000000, 511766528], [5000000, 635924480]], "label": "momo_map"}, {"data": [[1000000, 166838272], [2000000, 320794624], [3000000, 474750976], [4000000, 628842496], [5000000, 782798848]], "label": "std_map_momo_pool"}, {"data": [[1000000, 172781568], [2000000, 332820480], [3000000, 492724224], [4000000, 652763136], [5000000, 812802048]], "label": "std_map"}, {"data": [[1000000, 151732224], [2000000, 290549760], [3000000, 429367296], [4000000, 568184832], [5000000, 707002368]], "label": "google_btree_map"}], 
+"insertstring-runtime": [{"data": [[1000000, 2.708673], [2000000, 6.13708], [3000000, 9.734799], [4000000, 13.384953], [5000000, 17.264751]], "label": "momo_map"}, {"data": [[1000000, 2.209055], [2000000, 5.025338], [3000000, 7.96085], [4000000, 11.048924], [5000000, 14.199428]], "label": "std_map_momo_pool"}, {"data": [[1000000, 2.153567], [2000000, 4.852827], [3000000, 7.658189], [4000000, 10.556747], [5000000, 13.662291]], "label": "std_map"}, {"data": [[1000000, 2.620915], [2000000, 5.9209], [3000000, 9.419251], [4000000, 13.104202], [5000000, 16.958136]], "label": "google_btree_map"}], 
+"deletesmallstring-runtime": [{"data": [[1000000, 1.453376], [2000000, 3.156706], [3000000, 4.965677], [4000000, 6.82826], [5000000, 8.76848]], "label": "momo_map"}, {"data": [[1000000, 1.741794], [2000000, 3.84026], [3000000, 6.139592], [4000000, 8.513962], [5000000, 10.891176]], "label": "std_map_momo_pool"}, {"data": [[1000000, 1.735505], [2000000, 3.852401], [3000000, 6.197621], [4000000, 8.436204], [5000000, 10.934039]], "label": "std_map"}, {"data": [[1000000, 1.520632], [2000000, 3.316151], [3000000, 5.268517], [4000000, 7.302065], [5000000, 9.455301]], "label": "google_btree_map"}]}
+
+    
+
+    function plot_chart(dataset, chart_container, choices_container, chart_settings) {
+        // Set colors
+        var color = 0;
+        $.each(dataset, function(key, val) {
+            val.color = color;
+            color++;
+        });
+        
+        // Insert checkboxes 
+        $.each(dataset, function(key, val) {
+            $(choices_container).append( 
+                "<li><input type='checkbox' name='" + key +"' checked='checked' id='id" + key + "'></input>" +
+                "<label for='id" + key + "'>" + val.label + "</label></li>");
+        });
+        
+        $(choices_container).find("input").click(plot_according_to_choices);
+        
+        function plot_according_to_choices() {
+            var data = [];
+            $(choices_container).find("input:checked").each(
+                function () {
+                    var key = $(this).attr("name");
+                    if (key && dataset[key]) {
+                            data.push(dataset[key]);
+                    }
+                }
+            );
+
+            if (data.length > 0) {
+                $.plot(chart_container, data, chart_settings);
+                
+    
+                $(chart_container).bind("plothover", function (event, pos, item) {
+                    if (item) {
+                        var x = item.datapoint[0];
+                        var y = item.datapoint[1].toFixed(2);
+
+                        $("#tooltip").html(y + " ; " + x)
+                                     .css({top: item.pageY+5, left: item.pageX+5})
+                                     .fadeIn(200);
+                    } else {
+                        $("#tooltip").hide();
+                    }        
+                });
+            }
+        }
+
+        plot_according_to_choices()
+    }
+
+    $(function () {
+        plot_chart(chart_data['randomfull-runtime'], '#randomfull-runtime', '#randomfull-runtime-choices', runtime_settings);
+        plot_chart(chart_data['randomfullread-runtime'], '#randomfullread-runtime', '#randomfullread-runtime-choices', runtime_settings);
+        plot_chart(chart_data['iteration-runtime'], '#iteration-runtime', '#iteration-runtime-choices', runtime_settings);
+        plot_chart(chart_data['delete-runtime'], '#delete-runtime', '#delete-runtime-choices', runtime_settings);
+        plot_chart(chart_data['randomfull-memory'], '#randomfull-memory', '#randomfull-memory-choices', memory_settings);
+        plot_chart(chart_data['insertsmallstring-runtime'], '#insertsmallstring-runtime', '#insertsmallstring-runtime-choices', runtime_settings);
+        plot_chart(chart_data['readsmallstring-runtime'], '#readsmallstring-runtime', '#readsmallstring-runtime-choices', runtime_settings);
+        plot_chart(chart_data['deletesmallstring-runtime'], '#deletesmallstring-runtime', '#deletesmallstring-runtime-choices', runtime_settings);
+        plot_chart(chart_data['insertsmallstring-memory'], '#insertsmallstring-memory', '#insertsmallstring-memory-choices', memory_settings);
+        plot_chart(chart_data['insertstring-runtime'], '#insertstring-runtime', '#insertstring-runtime-choices', runtime_settings);
+        plot_chart(chart_data['readstring-runtime'], '#readstring-runtime', '#readstring-runtime-choices', runtime_settings);
+        plot_chart(chart_data['deletestring-runtime'], '#deletestring-runtime', '#deletestring-runtime-choices', runtime_settings);
+        plot_chart(chart_data['insertstring-memory'], '#insertstring-memory', '#insertstring-memory-choices', memory_settings);
+    });
+    
+       
+    
+</script>
+
+<style>
+    body, * { font-family: sans-serif; }
+    div.global {
+        margin: auto;
+        width: 800px;
+    }
+    div.chart {
+        float: left;
+        width: 700px;
+        height: 400px;
+    }
+    div.choices {
+        float: left;
+    }
+    div.xaxis-title {
+        width: 700px;
+        text-align: center;
+        font-style: italic;
+        font-size: small;
+        color: #666;
+    }
+    .choices li {
+        display: block;
+        float: left;
+        width: 50%;
+    }
+    div.chart-after-space {
+        margin-bottom: 10.0em;
+    }
+</style>
+
+<div class="global">
+
+<b>Date:</b> 12.07.18<br/>
+<b>OS:</b> Ubuntu 18.04<br/>
+<b>Computer:</b> Intel(R) Pentium(R) CPU 2117U @ 1.80GHz 4Gb RAM<br/>
+<b>Compiler:</b> GCC 7.3.0 x64<br/>
+<br/>
+
+<h3>Inserts: execution time (integers)</h3>
+<div class="chart" id="randomfull-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="randomfull-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Reads: execution time (integers)</h3>
+<div class="chart" id="randomfullread-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="randomfullread-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Deletes: execution time (integers)</h3>
+<div class="chart" id="delete-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="delete-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Iteration: execution time (integers)</h3>
+<div class="chart" id="iteration-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="iteration-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Memory usage of inserts (integers)</h3>
+<div class="chart" id="randomfull-memory"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="randomfull-memory-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Inserts: execution time (small strings)</h3>
+<div class="chart" id="insertsmallstring-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="insertsmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Reads: execution time (small strings)</h3>
+<div class="chart" id="readsmallstring-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="readsmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Deletes: execution time (small strings)</h3>
+<div class="chart" id="deletesmallstring-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="deletesmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Memory usage of inserts (small strings)</h3>
+<div class="chart" id="insertsmallstring-memory"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="insertsmallstring-memory-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Inserts: execution time (strings)</h3>
+<div class="chart" id="insertstring-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="insertstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Reads: execution time (strings)</h3>
+<div class="chart" id="readstring-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="readstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Deletes: execution time (strings)</h3>
+<div class="chart" id="deletestring-runtime"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="deletestring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
+
+<h3>Memory usage of inserts (strings)</h3>
+<div class="chart" id="insertstring-memory"></div>
+<div class="xaxis-title">number of entries</div>
+<ul class="choices" id="insertstring-memory-choices"></ul>
+<div class="chart-after-space"></div>
+
+</div>
+
+</body>
+</html>
